@@ -9,6 +9,7 @@ import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
 import NotFound from "@/pages/not-found";
 import Subscribe from "@/pages/subscribe";
+import TripDetails from "@/pages/trip-details";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/subscribe" component={Subscribe} />
+      <Route path="/trip/:id" component={TripDetails} />
       <Route component={NotFound} />
     </Switch>
   );

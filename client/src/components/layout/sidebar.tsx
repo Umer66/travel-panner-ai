@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { BarChart3, Plus, Briefcase, Heart } from "lucide-react";
+import { BarChart3, Plus, Briefcase, Heart, Crown } from "lucide-react";
 
 interface SidebarProps {
   activeSection: string;
@@ -11,6 +11,7 @@ const navigation = [
   { id: "create-trip", name: "Create Trip", icon: Plus },
   { id: "my-trips", name: "My Trips", icon: Briefcase },
   { id: "favorites", name: "Favorites", icon: Heart },
+  { id: "billing", name: "Billing & Plans", icon: Crown },
 ];
 
 export default function Sidebar({ activeSection, onSectionChange }: SidebarProps) {

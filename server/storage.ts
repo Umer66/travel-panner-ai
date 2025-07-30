@@ -145,6 +145,30 @@ export class DatabaseStorage implements IStorage {
     const result = await db.delete(favorites).where(eq(favorites.id, id));
     return (result.rowCount || 0) > 0;
   }
+
+  async updateUserTripCount(userId: string, tripCount: number): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        tripCount,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user || undefined;
+  }
+
+  async updateUserSubscription(userId: string, plan: string): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        subscriptionTier: plan,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user || undefined;
+  }
 }
 
 export const storage = new DatabaseStorage();

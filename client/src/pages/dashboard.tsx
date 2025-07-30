@@ -7,6 +7,8 @@ import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CreateTripForm from "@/components/trip/create-trip-form";
 import TripCard from "@/components/trip/trip-card";
+import UpgradePrompt from "@/components/subscription/upgrade-prompt";
+import SubscriptionPlans from "@/components/subscription/subscription-plans";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -358,6 +360,58 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
             )}
+          </div>
+        );
+
+      case "billing":
+        return (
+          <div>
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Billing & Plans</h1>
+              <p className="text-gray-600">Manage your subscription and billing</p>
+            </div>
+
+            {/* Current Plan Status */}
+            <Card className="mb-8">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Current Plan</h2>
+                    <p className="text-gray-600 capitalize">{dbUser?.subscriptionTier || 'free'} Plan</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-600">Trips Used</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {dbUser?.tripCount || 0} / {
+                        dbUser?.subscriptionTier === 'premium' ? 10 :
+                        dbUser?.subscriptionTier === 'premium_plus' ? 15 : 5
+                      }
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Show upgrade prompt if needed */}
+                {dbUser && (
+                  <UpgradePrompt
+                    currentPlan={dbUser.subscriptionTier || 'free'}
+                    tripsUsed={dbUser.tripCount || 0}
+                    tripLimit={
+                      dbUser.subscriptionTier === 'premium' ? 10 :
+                      dbUser.subscriptionTier === 'premium_plus' ? 15 : 5
+                    }
+                    onUpgrade={() => window.location.href = '/subscribe'}
+                  />
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Subscription Plans */}
+            <SubscriptionPlans
+              currentPlan={dbUser?.subscriptionTier || 'free'}
+              onUpgrade={(plan) => {
+                window.location.href = `/subscribe?plan=${plan}`;
+              }}
+            />
           </div>
         );
 

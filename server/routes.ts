@@ -76,6 +76,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/trip/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const trip = await storage.getTrip(id);
+      
+      if (!trip) {
+        return res.status(404).json({ message: "Trip not found" });
+      }
+      
+      res.json(trip);
+    } catch (error) {
+      console.error("Error fetching trip:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   app.post("/api/trips", async (req, res) => {
     try {
       // Parse dates from strings if needed
