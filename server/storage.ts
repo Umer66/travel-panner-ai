@@ -1,7 +1,7 @@
 import { type User, type InsertUser, type Trip, type InsertTrip, type Favorite, type InsertFavorite } from "@shared/schema";
 import { db } from "./db";
 import { users, trips, favorites } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -9,6 +9,8 @@ export interface IStorage {
   getUserByClerkId(clerkId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined>;
+  incrementTripCount(userId: string): Promise<User | undefined>;
+  updateUserSubscription(userId: string, subscriptionTier: string, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined>;
 
   // Trip methods
   getUserTrips(userId: string): Promise<Trip[]>;
@@ -53,6 +55,37 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date(),
       })
       .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async incrementTripCount(userId: string): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        tripCount: sql`${users.tripCount} + 1`,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user || undefined;
+  }
+
+  async updateUserSubscription(
+    userId: string, 
+    subscriptionTier: string,
+    stripeCustomerId?: string,
+    stripeSubscriptionId?: string
+  ): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        subscriptionTier,
+        stripeCustomerId,
+        stripeSubscriptionId,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId))
       .returning();
     return user || undefined;
   }

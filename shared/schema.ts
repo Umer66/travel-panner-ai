@@ -11,6 +11,10 @@ export const users = pgTable("users", {
   firstName: text("first_name"),
   lastName: text("last_name"),
   profileImage: text("profile_image"),
+  subscriptionTier: text("subscription_tier").notNull().default('free'), // free, premium, premium_plus
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  tripCount: integer("trip_count").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

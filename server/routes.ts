@@ -3,6 +3,14 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertUserSchema, insertTripSchema, insertFavoriteSchema } from "@shared/schema";
 import { generateTripItinerary } from "./gemini";
+import Stripe from "stripe";
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // User routes
@@ -79,6 +87,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const tripData = insertTripSchema.parse(bodyWithDates);
       
+      // Check trip limits based on user's subscription
+      const user = await storage.getUser(tripData.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const tripLimits = { free: 5, premium: 10, premium_plus: 15 };
+      const userLimit = tripLimits[user.subscriptionTier as keyof typeof tripLimits] || 5;
+      
+      if (user.tripCount >= userLimit) {
+        return res.status(429).json({ 
+          message: "Trip limit reached",
+          currentPlan: user.subscriptionTier,
+          tripLimit: userLimit,
+          tripsUsed: user.tripCount
+        });
+      }
+      
       // Generate AI itinerary
       const itinerary = await generateTripItinerary({
         destination: tripData.destination,
@@ -94,6 +120,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         itinerary: itinerary as any,
         status: 'draft',
       });
+      
+      // Increment user's trip count
+      await storage.incrementTripCount(user.id);
       
       res.status(201).json(trip);
     } catch (error) {
@@ -172,6 +201,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting favorite:", error);
       res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Subscription routes
+  app.post("/api/create-subscription", async (req, res) => {
+    try {
+      const { plan } = req.body;
+      const planPrices = {
+        premium: 999, // $9.99 in cents
+        premium_plus: 1999 // $19.99 in cents
+      };
+      
+      const amount = planPrices[plan as keyof typeof planPrices];
+      if (!amount) {
+        return res.status(400).json({ message: "Invalid plan" });
+      }
+      
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: "usd",
+        metadata: { plan }
+      });
+      
+      res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (error: any) {
+      console.error("Error creating subscription:", error);
+      res.status(500).json({ message: "Error creating subscription: " + error.message });
+    }
+  });
+
+  app.post("/api/upgrade-subscription", async (req, res) => {
+    try {
+      const { userId, plan } = req.body;
+      
+      const user = await storage.updateUserSubscription(userId, plan);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json(user);
+    } catch (error: any) {
+      console.error("Error upgrading subscription:", error);
+      res.status(500).json({ message: "Error upgrading subscription: " + error.message });
     }
   });
 

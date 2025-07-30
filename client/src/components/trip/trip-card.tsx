@@ -1,117 +1,129 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, DollarSign } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, Users, DollarSign, MoreHorizontal, Eye } from "lucide-react";
+import { format } from "date-fns";
 import type { Trip } from "@shared/schema";
+import { Link } from "wouter";
 
 interface TripCardProps {
   trip: Trip;
   variant?: "default" | "compact";
 }
 
-const statusColors = {
-  draft: "bg-yellow-100 text-yellow-800",
-  upcoming: "bg-blue-100 text-blue-800", 
-  completed: "bg-green-100 text-green-800",
-};
-
-const getDestinationImage = (destination: string) => {
-  // Simple destination to image mapping
-  const images: Record<string, string> = {
-    "paris": "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-    "tokyo": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-    "italy": "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-    "santorini": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-    "maldives": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-    "japan": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-  };
-  
-  const key = Object.keys(images).find(k => destination.toLowerCase().includes(k));
-  return key ? images[key] : "https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250";
-};
-
 export default function TripCard({ trip, variant = "default" }: TripCardProps) {
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric"
-    });
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "upcoming":
+        return "bg-blue-100 text-blue-800";
+      case "draft":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const formatDateRange = (startDate: Date, endDate: Date) => {
+    try {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      return `${format(start, "MMM d")} - ${format(end, "MMM d, yyyy")}`;
+    } catch (error) {
+      return "Invalid dates";
+    }
   };
 
   if (variant === "compact") {
     return (
-      <div className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
-        <img 
-          src={getDestinationImage(trip.destination)} 
-          alt={trip.title}
-          className="w-16 h-16 rounded-lg object-cover"
-        />
+      <div className="flex items-center space-x-4 p-4 border rounded-lg hover:shadow-md transition-shadow cursor-pointer">
+        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <MapPin className="text-white text-2xl" />
+        </div>
         <div className="flex-1">
           <h3 className="font-semibold text-gray-900">{trip.title}</h3>
-          <p className="text-sm text-gray-600">
-            {formatDate(trip.startDate)} - {formatDate(trip.endDate)}
-          </p>
+          <p className="text-sm text-gray-600">{trip.destination}</p>
+          <p className="text-xs text-gray-500">{formatDateRange(trip.startDate, trip.endDate)}</p>
         </div>
-        <Badge className={statusColors[trip.status as keyof typeof statusColors]}>
-          {trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}
+        <Badge className={getStatusColor(trip.status)}>
+          {trip.status}
         </Badge>
+        <Link href={`/trip/${trip.id}`}>
+          <Button variant="ghost" size="sm">
+            <Eye className="h-4 w-4" />
+          </Button>
+        </Link>
       </div>
     );
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <img 
-        src={getDestinationImage(trip.destination)} 
-        alt={trip.title}
-        className="w-full h-48 object-cover"
-      />
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold text-gray-900">{trip.title}</h3>
-          <Badge className={statusColors[trip.status as keyof typeof statusColors]}>
-            {trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
+      <div className="h-48 bg-gradient-to-br from-blue-500 to-purple-600 relative">
+        <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+          <div className="text-center text-white">
+            <MapPin className="mx-auto mb-2 h-8 w-8" />
+            <h3 className="text-xl font-bold">{trip.destination}</h3>
+          </div>
+        </div>
+        <div className="absolute top-4 right-4">
+          <Badge className={getStatusColor(trip.status)}>
+            {trip.status}
           </Badge>
         </div>
-        
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <Calendar className="mr-2 h-4 w-4" />
-            {formatDate(trip.startDate)} - {formatDate(trip.endDate)}
+      </div>
+      
+      <CardContent className="p-6">
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">{trip.title}</h3>
+            <p className="text-sm text-gray-600">{trip.destination}</p>
           </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <Users className="mr-2 h-4 w-4" />
-            {trip.travelers} {trip.travelers === 1 ? "traveler" : "travelers"}
+          
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center text-gray-600">
+              <Calendar className="mr-2 h-4 w-4" />
+              {formatDateRange(trip.startDate, trip.endDate)}
+            </div>
+            
+            <div className="flex items-center text-gray-600">
+              <Users className="mr-2 h-4 w-4" />
+              {trip.travelers} {trip.travelers === 1 ? "traveler" : "travelers"}
+            </div>
+            
+            <div className="flex items-center text-gray-600">
+              <DollarSign className="mr-2 h-4 w-4" />
+              {trip.budget} budget
+            </div>
           </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <DollarSign className="mr-2 h-4 w-4" />
-            {trip.budget.charAt(0).toUpperCase() + trip.budget.slice(1)} budget
-          </div>
-        </div>
-
-        {trip.interests && trip.interests.length > 0 && (
-          <div className="mb-4">
+          
+          {trip.interests && trip.interests.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {trip.interests.slice(0, 3).map((interest) => (
-                <Badge key={interest} variant="secondary" className="text-xs">
+              {trip.interests.slice(0, 3).map((interest, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
                   {interest}
                 </Badge>
               ))}
               {trip.interests.length > 3 && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="outline" className="text-xs">
                   +{trip.interests.length - 3} more
                 </Badge>
               )}
             </div>
+          )}
+          
+          <div className="flex justify-between items-center pt-4">
+            <Link href={`/trip/${trip.id}`}>
+              <Button className="flex-1 mr-2">
+                <Eye className="mr-2 h-4 w-4" />
+                View Details
+              </Button>
+            </Link>
+            <Button variant="ghost" size="sm">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
           </div>
-        )}
-
-        <div className="flex items-center justify-between">
-          <span className="text-blue-600 font-medium">{trip.destination}</span>
-          <Button variant="ghost" className="text-blue-600 hover:text-blue-700">
-            {trip.status === "draft" ? "Continue Planning" : "View Details"}
-          </Button>
         </div>
       </CardContent>
     </Card>

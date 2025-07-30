@@ -8,12 +8,14 @@ import { clerkPublishableKey } from "./lib/clerk";
 import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
 import NotFound from "@/pages/not-found";
+import Subscribe from "@/pages/subscribe";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/subscribe" component={Subscribe} />
       <Route component={NotFound} />
     </Switch>
   );
