@@ -70,7 +70,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/trips", async (req, res) => {
     try {
-      const tripData = insertTripSchema.parse(req.body);
+      // Parse dates from strings if needed
+      const bodyWithDates = {
+        ...req.body,
+        startDate: typeof req.body.startDate === 'string' ? new Date(req.body.startDate) : req.body.startDate,
+        endDate: typeof req.body.endDate === 'string' ? new Date(req.body.endDate) : req.body.endDate,
+      };
+      
+      const tripData = insertTripSchema.parse(bodyWithDates);
       
       // Generate AI itinerary
       const itinerary = await generateTripItinerary({

@@ -64,8 +64,8 @@ export default function CreateTripForm({ userId }: CreateTripFormProps) {
     mutationFn: async (data: FormData) => {
       const tripData = {
         ...data,
-        startDate: new Date(data.startDate),
-        endDate: new Date(data.endDate),
+        startDate: data.startDate, // Keep as string, server will parse
+        endDate: data.endDate, // Keep as string, server will parse
         title: `${data.destination} Adventure`,
       };
       
