@@ -158,7 +158,7 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async updateUserSubscription(userId: string, plan: string): Promise<User | undefined> {
+  async updateUserSubscription1(userId: string, plan: string): Promise<User | undefined> {
     const [user] = await db
       .update(users)
       .set({ 
