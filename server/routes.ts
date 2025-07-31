@@ -610,53 +610,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stripe Webhook handler
-  app.post("/api/stripe-webhook", express.raw({type: 'application/json'}), async (req, res) => {
-    const sig = req.headers['stripe-signature'] as string;
+// ✅ Updated webhook route - remove express.raw from here
+app.post("/api/stripe-webhook", async (req, res) => {
+  const sig = req.headers['stripe-signature'] as string;
+  
+  try {
+    const event = stripe.webhooks.constructEvent(
+      req.body, // This will now be the raw buffer
+      sig, 
+      process.env.STRIPE_WEBHOOK_SECRET!
+    );
     
-    try {
-      const event = stripe.webhooks.constructEvent(
-        req.body, 
-        sig, 
-        process.env.STRIPE_WEBHOOK_SECRET!
-      );
-      
-      console.log('Webhook event type:', event.type);
-      
-      switch (event.type) {
-        case 'checkout.session.completed':
-          const session = event.data.object as any;
-          const userId = session.metadata.userId;
-          const plan = session.metadata.plan;
-          
-          console.log('Upgrading user:', userId, 'to plan:', plan);
-          
-          // Update user in database using your existing method
-          await storage.updateUserSubscription(
-            userId, 
-            plan,
-            session.customer as string,
-            session.subscription as string
-          );
-          
-          break;
-          
-        case 'customer.subscription.updated':
-        case 'customer.subscription.deleted':
-          // Handle subscription changes/cancellations
-          const subscription = event.data.object as any;
-          console.log('Subscription updated:', subscription.id);
-          break;
-          
-        default:
-          console.log(`Unhandled event type ${event.type}`);
-      }
-      
-      res.json({ received: true });
-    } catch (error: any) {
-      console.error('Webhook error:', error.message);
-      res.status(400).json({ error: error.message });
+    console.log('Webhook received:', event.type, 'ID:', event.id);
+    
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = event.data.object as any;
+        console.log('Checkout completed for user:', session.metadata.userId);
+        
+        // Update user subscription
+        await storage.updateUserSubscription(
+          session.metadata.userId, 
+          session.metadata.plan,
+          session.customer as string,
+          session.subscription as string
+        );
+        
+        console.log('User upgraded to:', session.metadata.plan);
+        break;
+        
+      case 'customer.subscription.created':
+        const newSubscription = event.data.object as any;
+        console.log('New subscription created:', newSubscription.id);
+        break;
+        
+      case 'customer.subscription.updated':
+        const updatedSubscription = event.data.object as any;
+        console.log('Subscription updated:', updatedSubscription.id);
+        break;
+        
+      case 'customer.subscription.deleted':
+        const deletedSubscription = event.data.object as any;
+        console.log('Subscription deleted:', deletedSubscription.id);
+        break;
+        
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
     }
-  });
+    
+    res.json({ received: true });
+  } catch (error: any) {
+    console.error('Webhook error:', error.message);
+    res.status(400).json({ error: error.message });
+  }
+});
 
   // Get user's subscription status
   app.get("/api/subscription-status/:userId", async (req, res) => {
