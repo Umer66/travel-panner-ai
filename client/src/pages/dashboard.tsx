@@ -17,7 +17,7 @@ import { Plus, Route, Globe, Calendar, Heart, MapPin, MoreHorizontal, Trash2 } f
 import type { User, Trip, Favorite } from "@shared/schema";
 import UpgradeButton from "@/components/subscription/UpgradeButton";
 import { Eye } from "lucide-react";
-
+import ManageSubscription from "@/components/subscription/ManageSubscription";
 
 export default function Dashboard() {
   const { user: clerkUser, isSignedIn, isLoaded } = useUser();
@@ -192,7 +192,7 @@ export default function Dashboard() {
                     </div>
                   </Button>
                   
-                  <Button
+                  {/* <Button
                     className="flex items-center justify-start space-x-4 h-auto p-4 border-2 border-dashed border-emerald-200 hover:border-emerald-300 hover:bg-emerald-50 bg-transparent text-gray-900"
                     variant="outline"
                   >
@@ -203,7 +203,7 @@ export default function Dashboard() {
                       <h3 className="font-semibold">Explore Destinations</h3>
                       <p className="text-sm text-gray-600">Discover new places to visit</p>
                     </div>
-                  </Button>
+                  </Button> */}
                 </div>
               </CardContent>
             </Card>
@@ -457,7 +457,7 @@ export default function Dashboard() {
     </div>
   );
 
-      case "billing":
+     case "billing":
   return (
     <div>
       <div className="mb-8">
@@ -482,41 +482,69 @@ export default function Dashboard() {
                     } trips used
                   </p>
                 </div>
-                {dbUser.subscriptionTier === 'free' && (
-                  <UpgradeButton
-                    userId={dbUser.id}
-                    plan="premium"
-                    currentPlan={dbUser.subscriptionTier}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    Upgrade Plan
-                  </UpgradeButton>
-                )}
+                <div className="flex gap-2">
+                  {/* Show upgrade button only for free users */}
+                  {dbUser.subscriptionTier === 'free' && (
+                    <UpgradeButton
+                      userId={dbUser.id}
+                      plan="premium"
+                      currentPlan={dbUser.subscriptionTier}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Upgrade Plan
+                    </UpgradeButton>
+                  )}
+                  
+                  {/* Show manage subscription for premium users */}
+                  {dbUser.subscriptionTier !== 'free' && dbUser.stripeCustomerId && (
+                    <ManageSubscription customerId={dbUser.stripeCustomerId} />
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
 
+          {/* Show upgrade options only for free users */}
           {dbUser.subscriptionTier === 'free' && (
             <>
               <UpgradePrompt 
                 currentPlan={dbUser.subscriptionTier}
                 tripsUsed={dbUser.tripCount}
                 tripLimit={5}
-                userId={dbUser.id} // ✅ Add this line
+                userId={dbUser.id}
               />                    
 
               <SubscriptionPlans 
                 currentPlan={dbUser.subscriptionTier}
-                userId={dbUser.id} // ✅ Add this line
-                onUpgrade={() => {}} // Keep this for compatibility
+                userId={dbUser.id}
+                onUpgrade={() => {}}
               />                 
             </>
+          )}
+
+          {/* Show current plan benefits for premium users */}
+          {dbUser.subscriptionTier !== 'free' && (
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Plan Benefits</h3>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>✅ {dbUser.subscriptionTier === 'premium' ? '50' : '100'} AI-generated trips per month</li>
+                  <li>✅ Advanced itinerary customization</li>
+                  <li>✅ Priority customer support</li>
+                  {dbUser.subscriptionTier === 'premium_plus' && (
+                    <>
+                      <li>✅ Unlimited trip modifications</li>
+                      <li>✅ Export to PDF and other formats</li>
+                    </>
+                  )}
+                </ul>
+              </CardContent>
+            </Card>
           )}
         </div>
       )}
     </div>
   );
-
       default:
         return null;
     }
@@ -525,7 +553,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
     <Header />
-<div className="bg-white border-b px-8 py-4">
+{/* <div className="bg-white border-b px-8 py-4">
   <div className="flex items-center justify-end space-x-4">
     <span className="text-sm text-gray-600">
       {clerkUser?.firstName} {clerkUser?.lastName}
@@ -536,7 +564,7 @@ export default function Dashboard() {
       </Button>
     </SignOutButton>
   </div>
-</div>
+</div> */}
 
       <div className="flex">
         <Sidebar 

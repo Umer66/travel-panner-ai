@@ -71,52 +71,38 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  // async updateUserSubscription(
-  //   userId: string, 
-  //   subscriptionTier: string,
-  //   stripeCustomerId?: string,
-  //   stripeSubscriptionId?: string
-  // ): Promise<User | undefined> {
-  //   const [user] = await db
-  //     .update(users)
-  //     .set({ 
-  //       subscriptionTier,
-  //       stripeCustomerId,
-  //       stripeSubscriptionId,
-  //       updatedAt: new Date() 
-  //     })
-  //     .where(eq(users.id, userId))
-  //     .returning();
-  //   return user || undefined;
-  // }
-
   async updateUserSubscription(
-  userId: string, 
-  subscriptionTier: string,
-  stripeCustomerId?: string,
-  stripeSubscriptionId?: string
-): Promise<User | undefined> {
-  const updateData: any = { 
-    subscriptionTier,
-    updatedAt: new Date() 
-  };
-  
-  // Only set Stripe fields if they are provided
-  if (stripeCustomerId) {
-    updateData.stripeCustomerId = stripeCustomerId;
-  }
-  
-  if (stripeSubscriptionId) {
-    updateData.stripeSubscriptionId = stripeSubscriptionId;
-  }
+    userId: string, 
+    subscriptionTier: string,
+    stripeCustomerId?: string,
+    stripeSubscriptionId?: string
+  ): Promise<User | undefined> {
+    const updateData: any = { 
+      subscriptionTier,
+      updatedAt: new Date() 
+    };
+    
+    // Only set Stripe fields if they are provided
+    if (stripeCustomerId) {
+      updateData.stripeCustomerId = stripeCustomerId;
+    }
+    
+    if (stripeSubscriptionId) {
+      updateData.stripeSubscriptionId = stripeSubscriptionId;
+    }
 
-  const [user] = await db
-    .update(users)
-    .set(updateData)
-    .where(eq(users.id, userId))
-    .returning();
-  return user || undefined;
-}
+    try {
+      const [user] = await db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.id, userId))
+        .returning();
+      return user || undefined;
+    } catch (error) {
+      console.error('Error updating user subscription:', error);
+      return undefined;
+    }
+  }
 
   async getUserTrips(userId: string): Promise<Trip[]> {
     return await db
@@ -172,30 +158,6 @@ export class DatabaseStorage implements IStorage {
   async deleteFavorite(id: string): Promise<boolean> {
     const result = await db.delete(favorites).where(eq(favorites.id, id));
     return (result.rowCount || 0) > 0;
-  }
-
-  async updateUserTripCount(userId: string, tripCount: number): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ 
-        tripCount,
-        updatedAt: new Date() 
-      })
-      .where(eq(users.id, userId))
-      .returning();
-    return user || undefined;
-  }
-
-  async updateUserSubscription1(userId: string, plan: string): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ 
-        subscriptionTier: plan,
-        updatedAt: new Date() 
-      })
-      .where(eq(users.id, userId))
-      .returning();
-    return user || undefined;
   }
 }
 

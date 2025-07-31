@@ -692,6 +692,27 @@ app.post("/api/stripe-webhook", async (req, res) => {
     }
   });
 
+  // Add this route to your routes.ts
+app.post("/api/create-portal-session", async (req, res) => {
+  try {
+    const { customerId } = req.body;
+    
+    if (!customerId) {
+      return res.status(400).json({ message: "Customer ID is required" });
+    }
+    
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${process.env.CLIENT_URL}/dashboard?section=billing`,
+    });
+    
+    res.json({ url: portalSession.url });
+  } catch (error: any) {
+    console.error("Error creating portal session:", error);
+    res.status(500).json({ message: "Error creating portal session: " + error.message });
+  }
+});
+
   const httpServer = createServer(app);
   return httpServer;
 }
