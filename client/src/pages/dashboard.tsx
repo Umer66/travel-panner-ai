@@ -12,8 +12,12 @@ import SubscriptionPlans from "@/components/subscription/subscription-plans";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Route, Globe, Calendar, Heart } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Plus, Route, Globe, Calendar, Heart, MapPin, MoreHorizontal, Trash2 } from "lucide-react";
 import type { User, Trip, Favorite } from "@shared/schema";
+
+import { Eye } from "lucide-react";
+
 
 export default function Dashboard() {
   const { user: clerkUser, isSignedIn, isLoaded } = useUser();
@@ -234,7 +238,12 @@ export default function Dashboard() {
                 ) : recentTrips.length > 0 ? (
                   <div className="space-y-4">
                     {recentTrips.map((trip: Trip) => (
-                      <TripCard key={trip.id} trip={trip} variant="compact" />
+                      <TripCard 
+                        key={trip.id} 
+                        trip={trip} 
+                        variant="compact" 
+                        userId={dbUser?.id}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -286,7 +295,11 @@ export default function Dashboard() {
             ) : trips.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {trips.map((trip: Trip) => (
-                  <TripCard key={trip.id} trip={trip} />
+                  <TripCard 
+                    key={trip.id} 
+                    trip={trip} 
+                    userId={dbUser?.id}
+                  />
                 ))}
               </div>
             ) : (
@@ -308,60 +321,141 @@ export default function Dashboard() {
         );
 
       case "favorites":
-        return (
-          <div>
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Favorites</h1>
-              <p className="text-gray-600">Your saved destinations and experiences</p>
-            </div>
+  return (
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Favorite Trips</h1>
+        <p className="text-gray-600">Your most loved adventures</p>
+      </div>
 
-            {favoritesLoading ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3].map((i) => (
-                  <div key={i}>
-                    <Skeleton className="h-48 w-full rounded-t-xl" />
-                    <div className="p-6 space-y-2">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-3 w-24" />
-                      <Skeleton className="h-3 w-full" />
+      {favoritesLoading ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i}>
+              <Skeleton className="h-48 w-full rounded-t-xl" />
+              <div className="p-6 space-y-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-3 w-full" />
+                <div className="flex justify-between pt-2">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : favorites.length > 0 ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {favorites.map((favorite: Favorite) => (
+            <Card key={favorite.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="h-48 bg-gradient-to-br from-blue-500 to-purple-600 relative">
+                {favorite.imageUrl ? (
+                  <img src={favorite.imageUrl} alt={favorite.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                    <div className="text-center text-white">
+                      <MapPin className="mx-auto mb-2 h-8 w-8" />
+                      <h3 className="text-xl font-bold">{favorite.location}</h3>
                     </div>
                   </div>
-                ))}
+                )}
               </div>
-            ) : favorites.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {favorites.map((favorite: Favorite) => (
-                  <Card key={favorite.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <img 
-                      src={favorite.imageUrl || "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"} 
-                      alt={favorite.title}
-                      className="w-full h-48 object-cover"
-                    />
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{favorite.title}</h3>
-                      <p className="text-gray-600 text-sm mb-3">{favorite.location}</p>
-                      <p className="text-gray-500 text-sm mb-4">{favorite.description}</p>
-                      <Button variant="ghost" className="text-red-600 hover:text-red-700 p-0">
-                        <Heart className="mr-1 h-4 w-4" />
-                        Remove from Favorites
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Heart className="text-gray-400 text-2xl" />
+              
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{favorite.title}</h3>
+                    <p className="text-sm text-gray-600">{favorite.location}</p>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No favorites yet</h3>
-                  <p className="text-gray-600">Start exploring and save your favorite destinations</p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        );
+                  
+                  {favorite.description && (
+                    <p className="text-sm text-gray-600 line-clamp-2">{favorite.description}</p>
+                  )}
+                  
+                  {/* Updated button section to match My Trips layout */}
+                  <div className="flex justify-between items-center pt-4">
+<Button 
+  className="flex-1 mr-2"
+  onClick={() => {
+    if (favorite.tripId) {
+      // Navigate directly using the tripId
+      window.location.href = `/trip/${favorite.tripId}`;
+    } else {
+      // Fallback to the old method for existing favorites without tripId
+      const matchingTrip = trips.find(trip => 
+        trip.title === favorite.title && trip.destination === favorite.location
+      );
+      
+      if (matchingTrip) {
+        window.location.href = `/trip/${matchingTrip.id}`;
+      } else {
+        alert("Trip details not found. The trip may have been deleted from your trips.");
+      }
+    }
+  }}
+>
+  <Eye className="mr-2 h-4 w-4" />
+  View Details
+</Button>
+                    
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem 
+                          className="text-red-600"
+                          onClick={async () => {
+                            if (confirm("Are you sure you want to remove this from favorites?")) {
+                              try {
+                                console.log('Removing favorite:', favorite.id);
+                                const res = await apiRequest("DELETE", `/api/favorite/${favorite.id}`);
+                                
+                                if (res.ok) {
+                                  // Refresh the favorites list
+                                  queryClient.invalidateQueries({ queryKey: ["/api/favorites"] });
+                                  console.log('✅ Successfully removed from favorites');
+                                } else {
+                                  throw new Error('Failed to remove favorite');
+                                }
+                              } catch (error) {
+                                console.error("❌ Error removing favorite:", error);
+                                alert("Failed to remove from favorites. Please try again.");
+                              }
+                            }
+                          }}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Remove from Favorites
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Heart className="text-red-400 text-2xl" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No favorite trips yet</h3>
+            <p className="text-gray-600 mb-6">Add trips to your favorites by clicking the heart icon in the 3-dots menu</p>
+            <Button onClick={() => setActiveSection("my-trips")}>
+              <Route className="mr-2 h-4 w-4" />
+              Browse My Trips
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
 
       case "billing":
         return (
@@ -371,47 +465,49 @@ export default function Dashboard() {
               <p className="text-gray-600">Manage your subscription and billing</p>
             </div>
 
-            {/* Current Plan Status */}
-            <Card className="mb-8">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-900">Current Plan</h2>
-                    <p className="text-gray-600 capitalize">{dbUser?.subscriptionTier || 'free'} Plan</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-600">Trips Used</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {dbUser?.tripCount || 0} / {
-                        dbUser?.subscriptionTier === 'premium' ? 10 :
-                        dbUser?.subscriptionTier === 'premium_plus' ? 15 : 5
-                      }
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Show upgrade prompt if needed */}
-                {dbUser && (
-                  <UpgradePrompt
-                    currentPlan={dbUser.subscriptionTier || 'free'}
-                    tripsUsed={dbUser.tripCount || 0}
-                    tripLimit={
-                      dbUser.subscriptionTier === 'premium' ? 10 :
-                      dbUser.subscriptionTier === 'premium_plus' ? 15 : 5
-                    }
-                    onUpgrade={() => window.location.href = '/subscribe'}
-                  />
-                )}
-              </CardContent>
-            </Card>
+            {dbUser && (
+              <div className="space-y-8">
+                <Card>
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Current Plan</h2>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-lg font-medium text-gray-900 capitalize">
+                          {dbUser.subscriptionTier.replace('_', ' ')} Plan
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {dbUser.tripCount} of {
+                            dbUser.subscriptionTier === 'free' ? 5 :
+                            dbUser.subscriptionTier === 'premium' ? 10 : 15
+                          } trips used
+                        </p>
+                      </div>
+                      {dbUser.subscriptionTier === 'free' && (
+                        <Button onClick={() => {}}>
+                          Upgrade Plan
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
 
-            {/* Subscription Plans */}
-            <SubscriptionPlans
-              currentPlan={dbUser?.subscriptionTier || 'free'}
-              onUpgrade={(plan) => {
-                window.location.href = `/subscribe?plan=${plan}`;
-              }}
-            />
+                {dbUser.subscriptionTier === 'free' && (
+                  <>
+<UpgradePrompt 
+  currentPlan={dbUser.subscriptionTier}
+  tripsUsed={dbUser.tripCount}
+  tripLimit={5}
+  onUpgrade={() => {}}
+/>                    
+
+<SubscriptionPlans 
+  currentPlan={dbUser.subscriptionTier}
+  onUpgrade={() => {}}
+/>                 
+ </>
+                )}
+              </div>
+            )}
           </div>
         );
 
@@ -422,9 +518,26 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+    <Header />
+<div className="bg-white border-b px-8 py-4">
+  <div className="flex items-center justify-end space-x-4">
+    <span className="text-sm text-gray-600">
+      {clerkUser?.firstName} {clerkUser?.lastName}
+    </span>
+    <SignOutButton>
+      <Button variant="outline" size="sm">
+        Sign Out
+      </Button>
+    </SignOutButton>
+  </div>
+</div>
+
       <div className="flex">
-        <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+        <Sidebar 
+          activeSection={activeSection} 
+          onSectionChange={setActiveSection} 
+        />
+        
         <main className="flex-1 p-8">
           {renderSection()}
         </main>

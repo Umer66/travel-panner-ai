@@ -1,17 +1,102 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, DollarSign, MoreHorizontal, Eye } from "lucide-react";
+import { Calendar, MapPin, Users, DollarSign, MoreHorizontal, Eye, Heart, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import type { Trip } from "@shared/schema";
 import { Link } from "wouter";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useState } from "react";
 
 interface TripCardProps {
   trip: Trip;
   variant?: "default" | "compact";
+  isFavorited?: boolean;
+  userId?: string;
 }
 
-export default function TripCard({ trip, variant = "default" }: TripCardProps) {
+export default function TripCard({ trip, variant = "default", isFavorited = false, userId }: TripCardProps) {
+  const queryClient = useQueryClient();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Delete trip mutation
+  const deleteTripMutation = useMutation({
+    mutationFn: async (tripId: string) => {
+      const res = await apiRequest("DELETE", `/api/trip/${tripId}`);
+      return res;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/trips"] });
+    },
+  });
+
+  // Add to favorites mutation
+// Add to favorites mutation
+// In trip-card.tsx, update the addToFavoritesMutation:
+const addToFavoritesMutation = useMutation({
+  mutationFn: async (tripId: string) => {
+    const favoriteData = {
+      userId: userId,
+      tripId: trip.id, // Add this line
+      title: trip.title,
+      location: trip.destination,
+      description: `${trip.budget} budget trip for ${trip.travelers} ${trip.travelers === 1 ? 'traveler' : 'travelers'}. Interests: ${trip.interests?.join(', ') || 'None specified'}`,
+      imageUrl: trip.itinerary?.overview?.destinationImageUrl || null
+    };
+    
+    console.log('🚀 Sending favorite data:', favoriteData);
+    
+    const res = await apiRequest("POST", "/api/favorites", favoriteData);
+    return res.json();
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/favorites"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/trips"] });
+  },
+});
+
+  const handleDeleteTrip = async () => {
+    if (confirm("Are you sure you want to delete this trip? This action cannot be undone.")) {
+      setIsDeleting(true);
+      try {
+        await deleteTripMutation.mutateAsync(trip.id);
+      } catch (error) {
+        console.error("Error deleting trip:", error);
+        alert("Failed to delete trip. Please try again.");
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
+
+ const handleAddToFavorite = async () => {
+  console.log('=== DEBUG: Adding to favorites ===');
+  console.log('userId:', userId);
+  console.log('trip data:', {
+    id: trip.id,
+    title: trip.title,
+    destination: trip.destination,
+    budget: trip.budget,
+    travelers: trip.travelers
+  });
+
+  if (!userId) {
+    console.error('❌ No userId provided');
+    alert('Error: No user ID found');
+    return;
+  }
+
+  try {
+    const result = await addToFavoritesMutation.mutateAsync(trip.id);
+    console.log('✅ Successfully added to favorites:', result);
+  } catch (error) {
+    console.error("❌ Error adding to favorites:", error);
+    alert("Failed to add to favorites. Please try again.");
+  }
+};
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
@@ -54,6 +139,29 @@ export default function TripCard({ trip, variant = "default" }: TripCardProps) {
             <Eye className="h-4 w-4" />
           </Button>
         </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {!isFavorited && (
+              <DropdownMenuItem onClick={handleAddToFavorite}>
+                <Heart className="mr-2 h-4 w-4" />
+                Add to Favorites
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem 
+              className="text-red-600"
+              onClick={handleDeleteTrip}
+              disabled={isDeleting}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              {isDeleting ? 'Deleting...' : 'Delete Trip'}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     );
   }
@@ -120,9 +228,30 @@ export default function TripCard({ trip, variant = "default" }: TripCardProps) {
                 View Details
               </Button>
             </Link>
-            <Button variant="ghost" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {!isFavorited && (
+                  <DropdownMenuItem onClick={handleAddToFavorite}>
+                    <Heart className="mr-2 h-4 w-4" />
+                    Add to Favorites
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem 
+                  className="text-red-600"
+                  onClick={handleDeleteTrip}
+                  disabled={isDeleting}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {isDeleting ? 'Deleting...' : 'Delete Trip'}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </CardContent>

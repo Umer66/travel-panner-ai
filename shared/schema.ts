@@ -38,6 +38,7 @@ export const trips = pgTable("trips", {
 export const favorites = pgTable("favorites", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tripId: varchar("trip_id").notNull().references(() => trips.id, { onDelete: "cascade" }), // Add this line
   title: text("title").notNull(),
   location: text("location").notNull(),
   description: text("description"),

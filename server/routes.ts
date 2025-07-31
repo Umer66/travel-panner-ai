@@ -92,60 +92,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // app.post("/api/trips", async (req, res) => {
+  //   try {
+  //     // Parse dates from strings if needed
+  //     const bodyWithDates = {
+  //       ...req.body,
+  //       startDate: typeof req.body.startDate === 'string' ? new Date(req.body.startDate) : req.body.startDate,
+  //       endDate: typeof req.body.endDate === 'string' ? new Date(req.body.endDate) : req.body.endDate,
+  //     };
+      
+  //     const tripData = insertTripSchema.parse(bodyWithDates);
+      
+  //     // Check trip limits based on user's subscription
+  //     const user = await storage.getUser(tripData.userId);
+  //     if (!user) {
+  //       return res.status(404).json({ message: "User not found" });
+  //     }
+      
+  //     const tripLimits = { free: 5, premium: 10, premium_plus: 15 };
+  //     const userLimit = tripLimits[user.subscriptionTier as keyof typeof tripLimits] || 5;
+      
+  //     if (user.tripCount >= userLimit) {
+  //       return res.status(429).json({ 
+  //         message: "Trip limit reached",
+  //         currentPlan: user.subscriptionTier,
+  //         tripLimit: userLimit,
+  //         tripsUsed: user.tripCount
+  //       });
+  //     }
+      
+  //     // Generate AI itinerary
+  //     const itinerary = await generateTripItinerary({
+  //       destination: tripData.destination,
+  //       startDate: tripData.startDate,
+  //       endDate: tripData.endDate,
+  //       budget: tripData.budget,
+  //       travelers: tripData.travelers || 1,
+  //       interests: Array.isArray(tripData.interests) ? tripData.interests : [],
+  //     });
+      
+  //     const trip = await storage.createTrip({
+  //       ...tripData,
+  //       itinerary: itinerary as any,
+  //       status: 'draft',
+  //     });
+      
+  //     // Increment user's trip count
+  //     await storage.incrementTripCount(user.id);
+      
+  //     res.status(201).json(trip);
+  //   } catch (error) {
+  //     console.error("Error creating trip:", error);
+  //     res.status(500).json({ message: "Internal server error" });
+  //   }
+  // });
+
   app.post("/api/trips", async (req, res) => {
-    try {
-      // Parse dates from strings if needed
-      const bodyWithDates = {
-        ...req.body,
-        startDate: typeof req.body.startDate === 'string' ? new Date(req.body.startDate) : req.body.startDate,
-        endDate: typeof req.body.endDate === 'string' ? new Date(req.body.endDate) : req.body.endDate,
-      };
-      
-      const tripData = insertTripSchema.parse(bodyWithDates);
-      
-      // Check trip limits based on user's subscription
-      const user = await storage.getUser(tripData.userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      
-      const tripLimits = { free: 5, premium: 10, premium_plus: 15 };
-      const userLimit = tripLimits[user.subscriptionTier as keyof typeof tripLimits] || 5;
-      
-      if (user.tripCount >= userLimit) {
-        return res.status(429).json({ 
-          message: "Trip limit reached",
-          currentPlan: user.subscriptionTier,
-          tripLimit: userLimit,
-          tripsUsed: user.tripCount
-        });
-      }
-      
-      // Generate AI itinerary
-      const itinerary = await generateTripItinerary({
-        destination: tripData.destination,
-        startDate: tripData.startDate,
-        endDate: tripData.endDate,
-        budget: tripData.budget,
-        travelers: tripData.travelers || 1,
-        interests: Array.isArray(tripData.interests) ? tripData.interests : [],
-      });
-      
-      const trip = await storage.createTrip({
-        ...tripData,
-        itinerary: itinerary as any,
-        status: 'draft',
-      });
-      
-      // Increment user's trip count
-      await storage.incrementTripCount(user.id);
-      
-      res.status(201).json(trip);
-    } catch (error) {
-      console.error("Error creating trip:", error);
-      res.status(500).json({ message: "Internal server error" });
+  try {
+    // Parse dates from strings if needed
+    const bodyWithDates = {
+      ...req.body,
+      startDate: typeof req.body.startDate === 'string' ? new Date(req.body.startDate) : req.body.startDate,
+      endDate: typeof req.body.endDate === 'string' ? new Date(req.body.endDate) : req.body.endDate,
+    };
+    
+    const tripData = insertTripSchema.parse(bodyWithDates);
+    
+    // Check trip limits based on user's subscription
+    const user = await storage.getUser(tripData.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-  });
+    
+    const tripLimits = { free: 5, premium: 10, premium_plus: 15 };
+    const userLimit = tripLimits[user.subscriptionTier as keyof typeof tripLimits] || 5;
+    
+    if (user.tripCount >= userLimit) {
+      return res.status(429).json({ 
+        message: "Trip limit reached",
+        currentPlan: user.subscriptionTier,
+        tripLimit: userLimit,
+        tripsUsed: user.tripCount
+      });
+    }
+    
+    // Generate AI itinerary
+    const itinerary = await generateTripItinerary({
+      destination: tripData.destination,
+      startDate: tripData.startDate,
+      endDate: tripData.endDate,
+      budget: tripData.budget,
+      travelers: tripData.travelers || 1,
+      interests: Array.isArray(tripData.interests) ? tripData.interests : [],
+    });
+    
+    // 🎯 SMART STATUS LOGIC - Instead of hardcoded 'draft'
+    const now = new Date();
+    const startDate = new Date(tripData.startDate);
+    const endDate = new Date(tripData.endDate);
+    
+    let status: string;
+    if (endDate < now) {
+      status = 'completed';
+    } else if (startDate <= now && endDate >= now) {
+      status = 'ongoing'; // Currently happening
+    } else if (startDate > now) {
+      status = 'upcoming';
+    } else {
+      status = 'draft'; // Fallback
+    }
+    
+    const trip = await storage.createTrip({
+      ...tripData,
+      itinerary: itinerary as any,
+      status, // ← Now uses smart status instead of hardcoded 'draft'
+    });
+    
+    // Increment user's trip count
+    await storage.incrementTripCount(user.id);
+    
+    res.status(201).json(trip);
+  } catch (error) {
+    console.error("Error creating trip:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
   app.put("/api/trip/:id", async (req, res) => {
     try {
