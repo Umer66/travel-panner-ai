@@ -71,24 +71,52 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
+  // async updateUserSubscription(
+  //   userId: string, 
+  //   subscriptionTier: string,
+  //   stripeCustomerId?: string,
+  //   stripeSubscriptionId?: string
+  // ): Promise<User | undefined> {
+  //   const [user] = await db
+  //     .update(users)
+  //     .set({ 
+  //       subscriptionTier,
+  //       stripeCustomerId,
+  //       stripeSubscriptionId,
+  //       updatedAt: new Date() 
+  //     })
+  //     .where(eq(users.id, userId))
+  //     .returning();
+  //   return user || undefined;
+  // }
+
   async updateUserSubscription(
-    userId: string, 
-    subscriptionTier: string,
-    stripeCustomerId?: string,
-    stripeSubscriptionId?: string
-  ): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ 
-        subscriptionTier,
-        stripeCustomerId,
-        stripeSubscriptionId,
-        updatedAt: new Date() 
-      })
-      .where(eq(users.id, userId))
-      .returning();
-    return user || undefined;
+  userId: string, 
+  subscriptionTier: string,
+  stripeCustomerId?: string,
+  stripeSubscriptionId?: string
+): Promise<User | undefined> {
+  const updateData: any = { 
+    subscriptionTier,
+    updatedAt: new Date() 
+  };
+  
+  // Only set Stripe fields if they are provided
+  if (stripeCustomerId) {
+    updateData.stripeCustomerId = stripeCustomerId;
   }
+  
+  if (stripeSubscriptionId) {
+    updateData.stripeSubscriptionId = stripeSubscriptionId;
+  }
+
+  const [user] = await db
+    .update(users)
+    .set(updateData)
+    .where(eq(users.id, userId))
+    .returning();
+  return user || undefined;
+}
 
   async getUserTrips(userId: string): Promise<Trip[]> {
     return await db

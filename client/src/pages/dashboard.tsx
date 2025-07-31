@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Plus, Route, Globe, Calendar, Heart, MapPin, MoreHorizontal, Trash2 } from "lucide-react";
 import type { User, Trip, Favorite } from "@shared/schema";
-
+import UpgradeButton from "@/components/subscription/UpgradeButton";
 import { Eye } from "lucide-react";
 
 
@@ -458,58 +458,64 @@ export default function Dashboard() {
   );
 
       case "billing":
-        return (
-          <div>
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Billing & Plans</h1>
-              <p className="text-gray-600">Manage your subscription and billing</p>
-            </div>
+  return (
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Billing & Plans</h1>
+        <p className="text-gray-600">Manage your subscription and billing</p>
+      </div>
 
-            {dbUser && (
-              <div className="space-y-8">
-                <Card>
-                  <CardContent className="p-6">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Current Plan</h2>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-lg font-medium text-gray-900 capitalize">
-                          {dbUser.subscriptionTier.replace('_', ' ')} Plan
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {dbUser.tripCount} of {
-                            dbUser.subscriptionTier === 'free' ? 5 :
-                            dbUser.subscriptionTier === 'premium' ? 10 : 15
-                          } trips used
-                        </p>
-                      </div>
-                      {dbUser.subscriptionTier === 'free' && (
-                        <Button onClick={() => {}}>
-                          Upgrade Plan
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-
+      {dbUser && (
+        <div className="space-y-8">
+          <Card>
+            <CardContent className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Current Plan</h2>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-lg font-medium text-gray-900 capitalize">
+                    {dbUser.subscriptionTier.replace('_', ' ')} Plan
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {dbUser.tripCount} of {
+                      dbUser.subscriptionTier === 'free' ? 5 :
+                      dbUser.subscriptionTier === 'premium' ? 50 : 100
+                    } trips used
+                  </p>
+                </div>
                 {dbUser.subscriptionTier === 'free' && (
-                  <>
-<UpgradePrompt 
-  currentPlan={dbUser.subscriptionTier}
-  tripsUsed={dbUser.tripCount}
-  tripLimit={5}
-  onUpgrade={() => {}}
-/>                    
-
-<SubscriptionPlans 
-  currentPlan={dbUser.subscriptionTier}
-  onUpgrade={() => {}}
-/>                 
- </>
+                  <UpgradeButton
+                    userId={dbUser.id}
+                    plan="premium"
+                    currentPlan={dbUser.subscriptionTier}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Upgrade Plan
+                  </UpgradeButton>
                 )}
               </div>
-            )}
-          </div>
-        );
+            </CardContent>
+          </Card>
+
+          {dbUser.subscriptionTier === 'free' && (
+            <>
+              <UpgradePrompt 
+                currentPlan={dbUser.subscriptionTier}
+                tripsUsed={dbUser.tripCount}
+                tripLimit={5}
+                userId={dbUser.id} // ✅ Add this line
+              />                    
+
+              <SubscriptionPlans 
+                currentPlan={dbUser.subscriptionTier}
+                userId={dbUser.id} // ✅ Add this line
+                onUpgrade={() => {}} // Keep this for compatibility
+              />                 
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
 
       default:
         return null;
