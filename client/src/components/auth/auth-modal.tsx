@@ -22,7 +22,7 @@ export default function AuthModal({ isOpen, onClose, mode = "sign-in" }: AuthMod
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
                 <Compass className="text-white text-sm" />
               </div>
-              <DialogTitle className="text-xl font-bold">Navigo</DialogTitle>
+              <DialogTitle className="text-xl font-bold">Trip Planner</DialogTitle>
             </div>
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />
@@ -67,7 +67,7 @@ export default function AuthModal({ isOpen, onClose, mode = "sign-in" }: AuthMod
           ) : (
             <div className="space-y-4">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Join Navigo</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Join Trip Planner</h2>
                 <p className="text-gray-600">Start planning your dream trips today</p>
               </div>
               

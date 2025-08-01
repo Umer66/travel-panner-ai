@@ -26,31 +26,26 @@ export default function Home() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
-  // Redirect to dashboard if already signed in
-  if (isSignedIn) {
-    return <Redirect to="/dashboard" />;
-  }
-
   const testimonials = [
     {
       name: "Sarah Johnson",
       location: "New York, USA",
       rating: 5,
-      text: "Navigo planned the perfect 10-day European adventure for me. Every recommendation was spot-on, and I discovered hidden gems I never would have found on my own!",
+      text: "Trip Planner planned the perfect 10-day European adventure for me. Every recommendation was spot-on, and I discovered hidden gems I never would have found on my own!",
       avatar: "https://i.pravatar.cc/150?img=1"
     },
     {
       name: "Michael Chen",
       location: "Toronto, Canada",
       rating: 5,
-      text: "As a busy professional, I don't have time to research trips. Navigo's AI created an amazing itinerary for my Tokyo vacation in minutes. Absolutely brilliant!",
+      text: "As a busy professional, I don't have time to research trips. Trip Planner's AI created an amazing itinerary for my Tokyo vacation in minutes. Absolutely brilliant!",
       avatar: "https://i.pravatar.cc/150?img=2"
     },
     {
       name: "Emma Rodriguez",
       location: "Madrid, Spain",
       rating: 5,
-      text: "The family trip to Costa Rica was flawless thanks to Navigo. The AI understood our needs perfectly and included activities for both adults and kids.",
+      text: "The family trip to Costa Rica was flawless thanks to Trip Planner. The AI understood our needs perfectly and included activities for both adults and kids.",
       avatar: "https://i.pravatar.cc/150?img=3"
     }
   ];
@@ -107,7 +102,12 @@ export default function Home() {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials.length]);
+
+  // Redirect to dashboard if already signed in - MOVED AFTER ALL HOOKS
+  if (isSignedIn) {
+    return <Redirect to="/dashboard" />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -120,7 +120,7 @@ export default function Home() {
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
                 <Compass className="text-white text-sm" />
               </div>
-              <span className="text-xl font-bold text-gray-900">Navigo</span>
+              <span className="text-xl font-bold text-gray-900">Trip Planner</span>
             </div>
             
             {/* Desktop Navigation */}
@@ -224,7 +224,7 @@ export default function Home() {
       <section id="features" className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Navigo?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Trip Planner?</h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of travel planning with AI-powered personalization</p>
           </div>
           
@@ -252,8 +252,8 @@ export default function Home() {
               <div className="w-14 h-14 md:w-16 md:h-16 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
                 <Save className="text-white text-xl md:text-2xl" />
               </div>
-              <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3 md:mb-4">Save & Manage</h3>
-              <p className="text-gray-600">Keep all your trips organized in your personal dashboard with easy access anytime, anywhere.</p>
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3 md:mb-4">Save & Share</h3>
+              <p className="text-gray-600">Save your favorite itineraries and share them with friends and family for collaborative planning.</p>
             </div>
           </div>
         </div>
@@ -264,208 +264,58 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Popular Destinations</h2>
-            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Discover amazing places our AI recommends for unforgettable experiences</p>
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Discover amazing places around the world with our AI-curated recommendations</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {destinations.map((destination, index) => (
-              <div key={index} className="group cursor-pointer">
-                <div className="relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 transform group-hover:scale-105">
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
+                <div className="relative">
                   <img 
-                    src={destination.image}
+                    src={destination.image} 
                     alt={destination.name}
-                    className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="w-full h-48 object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                   <div className="absolute bottom-4 left-4 text-white">
-                    <h3 className="text-xl font-semibold mb-1">{destination.name}</h3>
+                    <h3 className="text-lg font-semibold mb-1">{destination.name}</h3>
                     <p className="text-sm text-gray-200">{destination.description}</p>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-
-
-  {/* How It Works Section */}
-      <section id="how-it-works" className="py-16 md:py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-lg md:text-xl text-gray-600">Three simple steps to your perfect trip</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="text-center">
-              <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl md:text-2xl font-bold">1</div>
-              <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">Tell Us Your Preferences</h3>
-              <p className="text-gray-600">Share your destination, budget, travel dates, and interests with our AI.</p>
-            </div>
-            
-            {/* Step 2 */}
-            <div className="text-center">
-              <div className="w-16 h-16 md:w-20 md:h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl md:text-2xl font-bold">2</div>
-              <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">AI Creates Your Itinerary</h3>
-              <p className="text-gray-600">Our AI analyzes your preferences and generates a personalized travel plan.</p>
-            </div>
-            
-            {/* Step 3 */}
-            <div className="text-center">
-              <div className="w-16 h-16 md:w-20 md:h-20 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl md:text-2xl font-bold">3</div>
-              <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">Enjoy Your Journey</h3>
-              <p className="text-gray-600">Follow your AI-crafted itinerary and create unforgettable memories.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-16 md:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your Plan</h2>
-            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Start free and upgrade as your travel planning needs grow</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-            {/* Free Plan */}
-            <Card className="relative p-6 md:p-8 hover:shadow-lg transition-shadow">
-              <CardContent className="p-0">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Free</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$0</span>
-                  <span className="text-gray-600">/month</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>5 AI-generated trips</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Basic itinerary features</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Email support</span>
-                  </li>
-                </ul>
-                <SignUpButton mode="modal">
-                  <Button className="w-full" variant="outline">
-                    Get Started Free
-                  </Button>
-                </SignUpButton>
-              </CardContent>
-            </Card>
-
-            {/* Premium Plan */}
-            <Card className="relative p-6 md:p-8 border-2 border-blue-500 hover:shadow-lg transition-shadow">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-blue-500 text-white text-sm font-semibold px-4 py-1 rounded-full">
-                  Most Popular
-                </span>
-              </div>
-              <CardContent className="p-0">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Premium</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$9.99</span>
-                  <span className="text-gray-600">/month</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>50 AI-generated trips</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Advanced customization</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Priority support</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Export to PDF</span>
-                  </li>
-                </ul>
-                <SignUpButton mode="modal">
-                  <Button className="w-full bg-blue-500 hover:bg-blue-600">
-                    Start Premium
-                  </Button>
-                </SignUpButton>
-              </CardContent>
-            </Card>
-
-            {/* Premium Plus Plan */}
-            <Card className="relative p-6 md:p-8 hover:shadow-lg transition-shadow">
-              <CardContent className="p-0">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Premium Plus</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$19.99</span>
-                  <span className="text-gray-600">/month</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>100 AI-generated trips</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Everything in Premium</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>24/7 support</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3" />
-                    <span>Team collaboration</span>
-                  </li>
-                </ul>
-                <SignUpButton mode="modal">
-                  <Button className="w-full" variant="outline">
-                    Go Premium Plus
-                  </Button>
-                </SignUpButton>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 md:py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="testimonials" className="py-16 md:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Travelers Say</h2>
-            <p className="text-lg md:text-xl text-gray-600">Join thousands of satisfied travelers who trust Navigo</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Our Travelers Say</h2>
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Real experiences from real travelers who trusted Trip Planner with their adventures</p>
           </div>
           
-          <div className="relative">
-            <Card className="p-6 md:p-8">
-              <CardContent className="p-0 text-center">
+          <div className="relative max-w-4xl mx-auto">
+            <Card className="p-8 md:p-12">
+              <CardContent className="text-center">
                 <div className="flex justify-center mb-4">
                   {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
                     <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <blockquote className="text-lg md:text-xl text-gray-700 mb-6">
+                <blockquote className="text-lg md:text-xl text-gray-700 mb-6 italic">
                   "{testimonials[currentTestimonial].text}"
                 </blockquote>
-                <div className="flex items-center justify-center">
-                  <img
-                    src={testimonials[currentTestimonial].avatar}
+                <div className="flex items-center justify-center space-x-4">
+                  <img 
+                    src={testimonials[currentTestimonial].avatar} 
                     alt={testimonials[currentTestimonial].name}
-                    className="w-12 h-12 rounded-full mr-4"
+                    className="w-12 h-12 rounded-full"
                   />
-                  <div>
+                  <div className="text-left">
                     <div className="font-semibold text-gray-900">{testimonials[currentTestimonial].name}</div>
-                    <div className="text-gray-600">{testimonials[currentTestimonial].location}</div>
+                    <div className="text-sm text-gray-600">{testimonials[currentTestimonial].location}</div>
                   </div>
                 </div>
               </CardContent>
@@ -487,131 +337,237 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section id="pricing" className="py-16 md:py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your Adventure Plan</h2>
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Start free and upgrade as your wanderlust grows</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+            {/* Free Plan */}
+            <Card className="relative p-6 md:p-8 hover:shadow-lg transition-all duration-300">
+              <CardContent>
+                <div className="text-center">
+                  <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-2">Explorer</h3>
+                  <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Free
+                  </div>
+                  <p className="text-gray-600 mb-6">Perfect for trying out AI travel planning</p>
+                  <ul className="space-y-3 text-left mb-8">
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>5 AI-generated trips per month</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>Basic itinerary features</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>Destination recommendations</span>
+                    </li>
+                  </ul>
+                  <SignUpButton mode="modal">
+                    <Button variant="outline" className="w-full">
+                      Get Started Free
+                    </Button>
+                  </SignUpButton>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Pro Plan */}
+            <Card className="relative p-6 md:p-8 border-2 border-blue-500 hover:shadow-lg transition-all duration-300 transform scale-105">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                  Most Popular
+                </span>
+              </div>
+              <CardContent>
+                <div className="text-center">
+                  <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-2">Adventurer</h3>
+                  <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-4">
+                    $9.99<span className="text-lg text-gray-600">/month</span>
+                  </div>
+                  <p className="text-gray-600 mb-6">For frequent travelers who want more</p>
+                  <ul className="space-y-3 text-left mb-8">
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>Unlimited AI-generated trips</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>Advanced customization</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>Priority support</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>Offline access</span>
+                    </li>
+                  </ul>
+                  <SignUpButton mode="modal">
+                    <Button className="w-full bg-blue-500 hover:bg-blue-600">
+                      Start Free Trial
+                    </Button>
+                  </SignUpButton>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Premium Plan */}
+            <Card className="relative p-6 md:p-8 hover:shadow-lg transition-all duration-300">
+              <CardContent>
+                <div className="text-center">
+                  <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-2">Globetrotter</h3>
+                  <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    $19.99<span className="text-lg text-gray-600">/month</span>
+                  </div>
+                  <p className="text-gray-600 mb-6">For travel professionals and enthusiasts</p>
+                  <ul className="space-y-3 text-left mb-8">
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>Everything in Adventurer</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>Group trip planning</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>Real-time collaboration</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3" />
+                      <span>White-label options</span>
+                    </li>
+                  </ul>
+                  <SignUpButton mode="modal">
+                    <Button variant="outline" className="w-full">
+                      Contact Sales
+                    </Button>
+                  </SignUpButton>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section id="faq" className="py-16 md:py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-            <p className="text-lg md:text-xl text-gray-600">Everything you need to know about Navigo</p>
+            <p className="text-lg md:text-xl text-gray-600">Everything you need to know about Trip Planner</p>
           </div>
           
           <div className="space-y-4">
             {faqs.map((faq, index) => (
               <Card key={index} className="overflow-hidden">
-                <CardContent className="p-0">
-                  <button
-                    onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                    className="w-full text-left p-6 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-gray-900 pr-4">{faq.question}</h3>
-                      {expandedFaq === index ? (
-                        <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                      ) : (
-                        <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                      )}
-                    </div>
-                  </button>
-                  {expandedFaq === index && (
-                    <div className="px-6 pb-6">
-                      <p className="text-gray-600">{faq.answer}</p>
-                    </div>
-                  )}
-                </CardContent>
+                <button
+                  className="w-full p-6 text-left hover:bg-gray-50 transition-colors"
+                  onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                >
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-900 pr-4">{faq.question}</h3>
+                    {expandedFaq === index ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                    )}
+                  </div>
+                </button>
+                {expandedFaq === index && (
+                  <div className="px-6 pb-6">
+                    <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                  </div>
+                )}
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-    
-
       {/* CTA Section */}
       <section className="py-16 md:py-20 bg-gradient-to-r from-blue-600 to-emerald-600">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Start Planning?</h2>
-          <p className="text-lg md:text-xl text-blue-100 mb-8">Join thousands of travelers who trust Navigo for their adventures</p>
-          <SignUpButton mode="modal">
-            <Button size="lg" className="bg-white text-blue-600 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg">
-              Create Your First Trip
-              <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
-            </Button>
-          </SignUpButton>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Ready to Start Your Next Adventure?
+          </h2>
+          <p className="text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of travelers who have discovered the magic of AI-powered trip planning
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <SignUpButton mode="modal">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold">
+                Start Planning Today
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </SignUpButton>
+            <div className="flex items-center text-blue-100">
+              <Clock className="h-5 w-5 mr-2" />
+              Free 14-day trial • No credit card required
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Enhanced Footer */}
-      <footer className="bg-gray-900 text-white py-12 md:py-16">
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="lg:col-span-2">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
                   <Compass className="text-white text-sm" />
                 </div>
-                <span className="text-xl font-bold">Navigo</span>
+                <span className="text-xl font-bold text-white">Trip Planner</span>
               </div>
-              <p className="text-gray-400 mb-6 max-w-md">Navigate your next journey with the power of AI. Create personalized travel itineraries that match your style and budget.</p>
-              <div className="flex items-center space-x-4 text-sm text-gray-400">
-                <div className="flex items-center">
-                  <Users className="h-4 w-4 mr-1" />
-                  50K+ travelers
-                </div>
-                <div className="flex items-center">
-                  <Globe className="h-4 w-4 mr-1" />
-                  195 countries
-                </div>
-                <div className="flex items-center">
-                  <Clock className="h-4 w-4 mr-1" />
-                  24/7 support
-                </div>
-              </div>
+              <p className="text-gray-400">
+                AI-powered travel planning that makes every journey unforgettable.
+              </p>
             </div>
+            
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="text-white font-semibold mb-4">Product</h4>
+              <ul className="space-y-2">
                 <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a></li>
                 <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#destinations" className="hover:text-white transition-colors">Destinations</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
               </ul>
             </div>
+            
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="text-white font-semibold mb-4">Support</h4>
+              <ul className="space-y-2">
                 <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-                <li><a href="#testimonials" className="hover:text-white transition-colors">Reviews</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="text-white font-semibold mb-4">Company</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Navigo. All rights reserved. | Privacy Policy | Terms of Service</p>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+            <p className="text-gray-400">
+              © 2024 Trip Planner. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
-
-      <style jsx>{`
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        .animate-fade-in-up {
-          animation: fade-in-up 1s ease-out;
-        }
-        
-        html {
-          scroll-behavior: smooth;
-        }
-      `}</style>
     </div>
   );
 }
