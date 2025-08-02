@@ -593,8 +593,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           quantity: 1,
         }],
         mode: 'subscription',
-        success_url: `${process.env.CLIENT_URL}/dashboard?upgraded=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL}/dashboard?cancelled=true`,
+        success_url: `${process.env.CLIENT_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.CLIENT_URL}/checkout-cancel`,
+      //   success_url: `${process.env.CLIENT_URL}/success?upgraded=true&session_id={CHECKOUT_SESSION_ID}`,
+      // cancel_url: `${process.env.CLIENT_URL}/dashboard?cancelled=true`,
         customer_email: user.email,
         metadata: {
           userId: userId,

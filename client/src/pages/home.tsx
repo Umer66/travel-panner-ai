@@ -695,12 +695,20 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                <Compass className="text-white text-sm" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">Trip Planner</span>
-            </div>
+           <div 
+  className="flex items-center space-x-2 cursor-pointer"
+  onClick={() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }}
+>
+  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
+    <Compass className="text-white text-sm" />
+  </div>
+  <span className="text-xl font-bold text-gray-900">Trip Planner</span>
+</div>
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
@@ -838,7 +846,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works Section */}
+    
+
+      {/* Destinations Section */}
+      <section id="destinations" className="py-16 md:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Popular Destinations</h2>
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Discover amazing places around the world with our AI-curated recommendations</p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {destinations.map((destination, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
+                <div className="relative">
+                  <img 
+                    src={destination.image} 
+                    alt={destination.name}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="text-lg font-semibold mb-1">{destination.name}</h3>
+                    <p className="text-sm text-gray-200">{destination.description}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+    
+  {/* How It Works Section */}
       <section id="how-it-works" className="py-16 md:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
@@ -901,38 +941,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Destinations Section */}
-      <section id="destinations" className="py-16 md:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Popular Destinations</h2>
-            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Discover amazing places around the world with our AI-curated recommendations</p>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {destinations.map((destination, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
-                <div className="relative">
-                  <img 
-                    src={destination.image} 
-                    alt={destination.name}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <h3 className="text-lg font-semibold mb-1">{destination.name}</h3>
-                    <p className="text-sm text-gray-200">{destination.description}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-    
-
       {/* Pricing Section */}
       <section id="pricing" className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1163,40 +1171,106 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Minimal Footer */}
      {/* Footer */}
-<footer className="bg-black text-white py-12">
+<footer className="bg-black text-white py-8">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="grid md:grid-cols-2 gap-8 items-start">
+    <div className="grid md:grid-cols-2 gap-6 items-start">
       {/* Left Side - Logo and Description */}
       <div>
-        <div className="flex items-center space-x-2 mb-6">
+        <div 
+          className="flex items-center space-x-2 mb-4 cursor-pointer"
+          onClick={() => {
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            });
+          }}
+        >
           <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
             <Compass className="text-white text-sm" />
           </div>
           <span className="text-xl font-bold text-white">Trip Planner</span>
         </div>
         
-        <p className="text-gray-300 text-lg leading-relaxed max-w-md">
-          AI-powered travel planning that makes every journey unforgettable. 
+        <p className="text-gray-300 leading-relaxed max-w-md">
+          AI-powered travel planning that makes every journey unforgettable.
         </p>
       </div>
       
-      {/* Right Side - Navigation Links */}
-      <div className="md:text-right">
-        <nav className="flex flex-wrap md:justify-end gap-6 md:gap-8 mb-8">
-          <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-          <a href="#destinations" className="text-gray-300 hover:text-white transition-colors">Destinations</a>
-          <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
-          <a href="#testimonials" className="text-gray-300 hover:text-white transition-colors">Reviews</a>
-          <a href="#faq" className="text-gray-300 hover:text-white transition-colors">FAQ</a>
+      {/* Right Side - Product Section */}
+      <div className="md:text-left">
+        {/* Product heading on its own line */}
+        <h3 className="text-white font-semibold mb-3">Product</h3>
+        
+        {/* Navigation links on the line below */}
+        <nav className="flex flex-wrap  gap-6 md:gap-8">
+          <a 
+            href="#features" 
+            className="text-gray-300 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('features')?.scrollIntoView({
+                behavior: 'smooth'
+              });
+            }}
+          >
+            Features
+          </a>
+           <a 
+            href="#destinations" 
+            className="text-gray-300 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('destinations')?.scrollIntoView({
+                behavior: 'smooth'
+              });
+            }}
+          >
+            Destinations
+          </a>
+          <a 
+            href="#pricing" 
+            className="text-gray-300 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('pricing')?.scrollIntoView({
+                behavior: 'smooth'
+              });
+            }}
+          >
+            Pricing
+          </a>
+          <a 
+            href="#testimonials" 
+            className="text-gray-300 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('testimonials')?.scrollIntoView({
+                behavior: 'smooth'
+              });
+            }}
+          >
+            Reviews
+          </a>
+          <a 
+            href="#faq" 
+            className="text-gray-300 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('faq')?.scrollIntoView({
+                behavior: 'smooth'
+              });
+            }}
+          >
+            FAQ
+          </a>
         </nav>
       </div>
     </div>
     
     {/* Copyright - Centered at bottom */}
-    <div className="border-t border-gray-800 pt-8 mt-8 text-center">
-      <p className="text-gray-400">
+    <div className="border-t border-gray-800 pt-6 mt-6 text-center">
+      <p className="text-gray-400 text-sm">
         © 2025 Trip Planner. All rights reserved.
       </p>
     </div>

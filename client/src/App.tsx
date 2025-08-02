@@ -10,6 +10,8 @@ import Dashboard from "@/pages/dashboard";
 import NotFound from "@/pages/not-found";
 import Subscribe from "@/pages/subscribe";
 import TripDetails from "@/pages/trip-details";
+import CheckoutSuccess from "@/pages/checkout-success";
+import CheckoutCancel from "@/pages/checkout-cancel";
 
 function Router() {
   return (
@@ -18,6 +20,8 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/trip/:id" component={TripDetails} />
+          <Route path="/checkout-success" component={CheckoutSuccess} />
+      <Route path="/checkout-cancel" component={CheckoutCancel} />
       <Route component={NotFound} />
     </Switch>
   );

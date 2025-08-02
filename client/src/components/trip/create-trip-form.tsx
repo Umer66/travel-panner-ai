@@ -174,7 +174,7 @@ export default function CreateTripForm({ userId }: CreateTripFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="budget">Budget ($0 - $1,000)</SelectItem>
+                      <SelectItem value="budget">Basic ($0 - $1,000)</SelectItem>
                       <SelectItem value="mid-range">Mid-range ($1,000 - $3,000)</SelectItem>
                       <SelectItem value="luxury">Luxury ($3,000+)</SelectItem>
                     </SelectContent>
