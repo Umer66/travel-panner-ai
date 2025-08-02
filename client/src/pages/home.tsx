@@ -31,21 +31,21 @@
 //       name: "Sarah Johnson",
 //       location: "New York, USA",
 //       rating: 5,
-//       text: "Trip Planner planned the perfect 10-day European adventure for me. Every recommendation was spot-on, and I discovered hidden gems I never would have found on my own!",
+//       text: "Travel Insider planned the perfect 10-day European adventure for me. Every recommendation was spot-on, and I discovered hidden gems I never would have found on my own!",
 //       avatar: "https://i.pravatar.cc/150?img=1"
 //     },
 //     {
 //       name: "Michael Chen",
 //       location: "Toronto, Canada",
 //       rating: 5,
-//       text: "As a busy professional, I don't have time to research trips. Trip Planner's AI created an amazing itinerary for my Tokyo vacation in minutes. Absolutely brilliant!",
+//       text: "As a busy professional, I don't have time to research trips. Travel Insider's AI created an amazing itinerary for my Tokyo vacation in minutes. Absolutely brilliant!",
 //       avatar: "https://i.pravatar.cc/150?img=2"
 //     },
 //     {
 //       name: "Emma Rodriguez",
 //       location: "Madrid, Spain",
 //       rating: 5,
-//       text: "The family trip to Costa Rica was flawless thanks to Trip Planner. The AI understood our needs perfectly and included activities for both adults and kids.",
+//       text: "The family trip to Costa Rica was flawless thanks to Travel Insider. The AI understood our needs perfectly and included activities for both adults and kids.",
 //       avatar: "https://i.pravatar.cc/150?img=3"
 //     }
 //   ];
@@ -121,7 +121,7 @@
 //               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
 //                 <Compass className="text-white text-sm" />
 //               </div>
-//               <span className="text-xl font-bold text-gray-900">Trip Planner</span>
+//               <span className="text-xl font-bold text-gray-900">Travel Insider</span>
 //             </div>
             
 //             {/* Desktop Navigation */}
@@ -225,7 +225,7 @@
 //       <section id="features" className="py-16 md:py-20 bg-white">
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 //           <div className="text-center mb-12 md:mb-16">
-//             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Trip Planner?</h2>
+//             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Travel Insider?</h2>
 //             <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of travel planning with AI-powered personalization</p>
 //           </div>
           
@@ -294,7 +294,7 @@
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 //           <div className="text-center mb-12 md:mb-16">
 //             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Our Travelers Say</h2>
-//             <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Real experiences from real travelers who trusted Trip Planner with their adventures</p>
+//             <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Real experiences from real travelers who trusted Travel Insider with their adventures</p>
 //           </div>
           
 //           <div className="relative max-w-4xl mx-auto">
@@ -464,7 +464,7 @@
 //         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 //           <div className="text-center mb-12 md:mb-16">
 //             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-//             <p className="text-lg md:text-xl text-gray-600">Everything you need to know about Trip Planner</p>
+//             <p className="text-lg md:text-xl text-gray-600">Everything you need to know about Travel Insider</p>
 //           </div>
           
 //           <div className="space-y-4">
@@ -527,7 +527,7 @@
 //                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
 //                   <Compass className="text-white text-sm" />
 //                 </div>
-//                 <span className="text-xl font-bold text-white">Trip Planner</span>
+//                 <span className="text-xl font-bold text-white">Travel Insider</span>
 //               </div>
 //               <p className="text-gray-400">
 //                 AI-powered travel planning that makes every journey unforgettable.
@@ -564,7 +564,7 @@
           
 //           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
 //             <p className="text-gray-400">
-//               © 2024 Trip Planner. All rights reserved.
+//               © 2024 Travel Insider. All rights reserved.
 //             </p>
 //           </div>
 //         </div>
@@ -610,21 +610,21 @@ export default function Home() {
       name: "Sarah Johnson",
       location: "New York, USA",
       rating: 5,
-      text: "Trip Planner planned the perfect 10-day European adventure for me. Every recommendation was spot-on, and I discovered hidden gems I never would have found on my own!",
+      text: "Travel Insider planned the perfect 10-day European adventure for me. Every recommendation was spot-on, and I discovered hidden gems I never would have found on my own!",
       avatar: "https://i.pravatar.cc/150?img=1"
     },
     {
       name: "Michael Chen",
       location: "Toronto, Canada",
       rating: 5,
-      text: "As a busy professional, I don't have time to research trips. Trip Planner's AI created an amazing itinerary for my Tokyo vacation in minutes. Absolutely brilliant!",
+      text: "As a busy professional, I don't have time to research trips. Travel Insider's AI created an amazing itinerary for my Tokyo vacation in minutes. Absolutely brilliant!",
       avatar: "https://i.pravatar.cc/150?img=2"
     },
     {
       name: "Emma Rodriguez",
       location: "Madrid, Spain",
       rating: 5,
-      text: "The family trip to Costa Rica was flawless thanks to Trip Planner. The AI understood our needs perfectly and included activities for both adults and kids.",
+      text: "The family trip to Costa Rica was flawless thanks to Travel Insider. The AI understood our needs perfectly and included activities for both adults and kids.",
       avatar: "https://i.pravatar.cc/150?img=3"
     }
   ];
@@ -707,7 +707,7 @@ export default function Home() {
   <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
     <Compass className="text-white text-sm" />
   </div>
-  <span className="text-xl font-bold text-gray-900">Trip Planner</span>
+  <span className="text-xl font-bold text-gray-900">Travel Insider</span>
 </div>
             
             {/* Desktop Navigation */}
@@ -811,7 +811,7 @@ export default function Home() {
       <section id="features" className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Trip Planner?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Travel Insider?</h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of travel planning with AI-powered personalization</p>
           </div>
           
@@ -1068,7 +1068,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Our Travelers Say</h2>
-            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Real experiences from real travelers who trusted Trip Planner with their adventures</p>
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Real experiences from real travelers who trusted Travel Insider with their adventures</p>
           </div>
           
           <div className="relative max-w-4xl mx-auto">
@@ -1117,7 +1117,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-            <p className="text-lg md:text-xl text-gray-600">Everything you need to know about Trip Planner</p>
+            <p className="text-lg md:text-xl text-gray-600">Everything you need to know about Travel Insider</p>
           </div>
           
           <div className="space-y-4">
@@ -1189,7 +1189,7 @@ export default function Home() {
           <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
             <Compass className="text-white text-sm" />
           </div>
-          <span className="text-xl font-bold text-white">Trip Planner</span>
+          <span className="text-xl font-bold text-white">Travel Insider</span>
         </div>
         
         <p className="text-gray-300 leading-relaxed max-w-md">
@@ -1271,7 +1271,7 @@ export default function Home() {
     {/* Copyright - Centered at bottom */}
     <div className="border-t border-gray-800 pt-6 mt-6 text-center">
       <p className="text-gray-400 text-sm">
-        © 2025 Trip Planner. All rights reserved.
+        © 2025 Travel Insider. All rights reserved.
       </p>
     </div>
   </div>

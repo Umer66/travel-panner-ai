@@ -13,7 +13,7 @@ export default function Header() {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
               <Compass className="text-white text-sm" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Trip Planner</span>
+            <span className="text-xl font-bold text-gray-900">Travel Insider</span>
           </div>
           
           {/* User Menu */}

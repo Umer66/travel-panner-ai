@@ -1,8 +1,8 @@
-# Trip Planner - AI Travel Planner
+# Travel Insider - AI Travel Planner
 
 ## Overview
 
-Trip Planner is a modern AI-powered travel planning application that helps users create personalized travel itineraries with smart recommendations and Google Maps integration. The application uses AI (Google Gemini) to generate detailed trip plans based on user preferences, destinations, budget, and interests.
+Travel Insider is a modern AI-powered travel planning application that helps users create personalized travel itineraries with smart recommendations and Google Maps integration. The application uses AI (Google Gemini) to generate detailed trip plans based on user preferences, destinations, budget, and interests.
 
 ## User Preferences
 
